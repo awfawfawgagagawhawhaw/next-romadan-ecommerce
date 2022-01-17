@@ -316,9 +316,22 @@ const Accounts = () => {
 			email, password
 		}).then((response) => {
 			setUseSpinner(false)
-			dispatch({ type: 'PENDING', payload: { email: email.toLowerCase() } })
-			HANDLE_CODES(email)
-			setUseSignIn(false), setUse2Steps(true)
+			
+			if ( response.data.verify ) {
+				setUseSpinner(false)
+				dispatch({ type: 'PENDING', payload: { email: email.toLowerCase() } })
+				HANDLE_CODES(email)
+				setUseSignIn(false), setUse2Steps(true)
+				return
+			}
+
+			setUseSpinner(false)
+			const clone_data = JSON.stringify(response.data)
+
+			Cookies.set('SESSION', clone_data)
+			dispatch({ type: 'LOADERS', payload: true })
+			dispatch({ type: 'PENDING', payload: null })
+			dispatch({ type: 'SESSION', payload: response.data })
 		}).catch((error) => {
 			if ( error.response && error.response.data.emailError ) {
 				setUseSpinner(false)
