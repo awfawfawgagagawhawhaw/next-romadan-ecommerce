@@ -14,7 +14,26 @@ export default async (req, res) => {
 	
 	if(!isMatch) return res.status(400).send({ passwordError: 'Incorrect password.' })
 
-	res.send('success')
+	if ( !users.isAdmin ) {
+		res.status(200).send({
+			id: users._id,
+			firstname: users.firstname,
+			lastname: users.lastname,
+			email: users.email,
+			contact: users.contact,
+			houseno: users.houseno,
+			street: users.street,
+			barangay: users.barangay,
+			city: users.city,
+			region: users.region,
+			country: users.country,
+			verified: users.verified,
+			avatar: users.avatar,
+			isAdmin: users.isAdmin
+		})
+	} else {
+		res.send({ verify: true })
+	}
 
 	await database.disconnect()
 }
